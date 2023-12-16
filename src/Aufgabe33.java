@@ -1,11 +1,12 @@
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Aufgabe33 {
     public static void main(String[] args){
-        String abc = "final int eingabe = 10;\n" +
-                "    int n = 0, sum = 0, next = 1, temp;\nprint(sum);";
+        String abc = """
+                final int eingabe = 10;
+                int n = 0, sum = 0, next = 1, temp;
+                print(sum);""";
         boolean test = programm(abc);
         System.out.println(test);
 

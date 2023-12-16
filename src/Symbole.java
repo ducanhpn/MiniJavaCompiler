@@ -38,21 +38,7 @@ public class Symbole{
   }
 }
 
-//neue Exceptionsklasse erstellen
-class ConstantAlreadyException extends Exception {
-  public ConstantAlreadyException(String message){
-    super(message);
-  }
-}
 
-class UnknowSymbolException extends Exception {
-  public UnknowSymbolException(String message){
-    super(message);
-  }
-}
 
-class SymbolAlreadyDefinedException extends Exception {
-  public SymbolAlreadyDefinedException(String message) { super(message);}
-}
 
 

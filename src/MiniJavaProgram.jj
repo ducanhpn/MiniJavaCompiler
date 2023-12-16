@@ -1,7 +1,6 @@
 PARSER_BEGIN(MiniJavaProgram)
 public class MiniJavaProgram {
 
-    public static GlobalKlasse globaleList;
     public static JavaClassFileGenerator abc = new JavaClassFileGenerator("ProgramFromGenerator",true,true,true);
 
     public static void main(String[] args){
@@ -375,7 +374,6 @@ String procCall(String functionName, String functionInline) throws WrongParamete
 int routinenParameter(String functionName) throws SymbolAlreadyDefinedException:{int i=0; Token vName=null; int ret =i;}{
 <INT> vName=<IDENT> {GlobalKlasse.getFunction(functionName).addVariable(vName.image,String.valueOf(i));i+=1; ret=i;} ret=parameterList(functionName, i)
 {
-System.out.println("How many parameter: " + ret);
 return ret;
 }
 }
@@ -399,21 +397,21 @@ String function() throws WrongParametersException,LWertException,RWertException,
 {
     // set function parameter number
     GlobalKlasse.getFunction(mName.image).paraNum = i;
-    System.out.println("mName : " + mName.image);
 }
      ")" "{" blockStr=routinenBlock(mName.image, i) "return" exp=expression(mName.image) ";" "}"
 {
     // store byte code
     GlobalKlasse.getFunction(mName.image).byteCode = blockStr + exp + "ac" ;
-    System.out.println("function bytecode: " + mName.image + " : " + blockStr + exp + "ac");
     return blockStr + exp + "ac";
 }
 }
 //procedure def
 String procedure() throws WrongParametersException,LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException:{String blockStr="";int i=0; Token mName=null;}{
 <VOID> mName=<IDENT>
-{// add function to list
-GlobalKlasse.setFunction(mName.image);}
+{
+    // add function to list
+    GlobalKlasse.setFunction(mName.image);
+}
  "(" (routinenParameter(mName.image))?
 {
     // set function parameter number
