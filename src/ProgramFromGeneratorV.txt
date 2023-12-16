@@ -128,7 +128,7 @@ ac     - ireturn
 ****Your byte code for "main" starts here****
 10 05  - bipush
 36 01  - istore
-10 05  - bipush
+10 0a  - bipush
 b8 001b  - invokestatic
 b8 0017  - invokestatic
 b1     - return

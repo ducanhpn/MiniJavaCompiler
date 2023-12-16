@@ -18,8 +18,8 @@ public class MiniJavaProgram implements MiniJavaProgramConstants {
         abc.generateClassFile(objs);
     }
 
-  static final public void start() throws ParseException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
-                                                                                                                                 String str="";
+  static final public void start() throws ParseException, WrongParametersException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
+                                                                                                                                                          String str="";
     str = programm();
  str+="b1";
     globaleList.getFunction("main").paraNum = 0;
@@ -30,19 +30,19 @@ public class MiniJavaProgram implements MiniJavaProgramConstants {
 System.out.println(str);
   }
 
-  static final public String programm() throws ParseException, RWertException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
-                                                                                                                                                      String str1=""; String str2="";String str3=""; String funcStr="";String procStr="";
+  static final public String programm() throws ParseException, WrongParametersException, RWertException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
+                                                                                                                                                                               String str1=""; String str2="";String str3=""; String funcStr="";String procStr="";
     str1 = constDecl("main");
     str2 = varDecl("main",1);
     procStr = procList();
     funcStr = funcList();
     str3 = statement("main");
-{if (true) return str1+str2+str3;}
+    {if (true) return str1+str2+str3;}
     throw new Error("Missing return statement in function");
   }
 
-  static final public String procList() throws ParseException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
-                                                                                                                                        String procStr=""; String listStr="";
+  static final public String procList() throws ParseException, WrongParametersException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
+                                                                                                                                                                 String procStr=""; String listStr="";
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case VOID:
       procStr = procedure();
@@ -56,8 +56,8 @@ System.out.println(str);
     throw new Error("Missing return statement in function");
   }
 
-  static final public String funcList() throws ParseException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
-                                                                                                                                        String funcStr=""; String listStr="";
+  static final public String funcList() throws ParseException, WrongParametersException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
+                                                                                                                                                                 String funcStr=""; String listStr="";
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case FUNC:
       funcStr = function();
@@ -177,16 +177,16 @@ else str += index;
     throw new Error("Missing return statement in function");
   }
 
-  static final public String expression(String functionName) throws ParseException, UnknowSymbolException, RWertException {
-                                                                                     String strTerm=""; String strSumme="";
+  static final public String expression(String functionName) throws ParseException, WrongParametersException, UnknowSymbolException, RWertException {
+                                                                                                              String strTerm=""; String strSumme="";
     strTerm = term(functionName);
     strSumme = summe(functionName);
      {if (true) return strTerm+strSumme;}
     throw new Error("Missing return statement in function");
   }
 
-  static final public String summe(String functionName) throws ParseException, UnknowSymbolException, RWertException {
-                                                                               String strTerm=""; String strSumme="";Token plusToken=null; Token minusToken=null;
+  static final public String summe(String functionName) throws ParseException, WrongParametersException, UnknowSymbolException, RWertException {
+                                                                                                        String strTerm=""; String strSumme="";Token plusToken=null; Token minusToken=null;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case PLUS:
     case MINUS:
@@ -219,16 +219,16 @@ else str += index;
     throw new Error("Missing return statement in function");
   }
 
-  static final public String term(String functionName) throws ParseException, UnknowSymbolException, RWertException {
-                                                                              String strFaktor=""; String strProduct="";
+  static final public String term(String functionName) throws ParseException, WrongParametersException, UnknowSymbolException, RWertException {
+                                                                                                       String strFaktor=""; String strProduct="";
     strFaktor = faktor(functionName);
     strProduct = product(functionName);
     {if (true) return strFaktor+strProduct;}
     throw new Error("Missing return statement in function");
   }
 
-  static final public String product(String functionName) throws ParseException, UnknowSymbolException, RWertException {
-                                                                                 Token malToken=null; Token geteiltToken=null; String strFaktor=""; String strProduct="";
+  static final public String product(String functionName) throws ParseException, WrongParametersException, UnknowSymbolException, RWertException {
+                                                                                                          Token malToken=null; Token geteiltToken=null; String strFaktor=""; String strProduct="";
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case MAL:
     case GETEILT:
@@ -257,8 +257,8 @@ else str += index;
     throw new Error("Missing return statement in function");
   }
 
-  static final public String faktor(String functionName) throws ParseException, UnknowSymbolException, RWertException {
-                                                                                Token num=null; Token ident=null; String exp =""; String str="";int i=0;String tmp=""; Token check=null;
+  static final public String faktor(String functionName) throws ParseException, WrongParametersException, UnknowSymbolException, RWertException {
+                                                                                                         Token num=null; Token ident=null; String exp =""; String str="";int i=0;String tmp=""; Token check=null;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case NUMBER:
       num = jj_consume_token(NUMBER);
@@ -275,16 +275,16 @@ else str += index;
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case 24:
         check = jj_consume_token(24);
-        tmp = functionCall(functionName);
+        tmp = functionCall(functionName, ident.image);
         break;
       default:
         jj_la1[11] = jj_gen;
         ;
       }
-if(check == null){ // Es handelt sich um einen Variablenamen oder Konstantnamen
-    if(globaleList.getFunction(functionName).tabelle.containsKey(ident.image) && !functionName.equals("main")){ // Das Symbol ist in der Symboltabelle der Funktion
+if(check == null){ // Es handelt sich um einen Variable-Namen oder Konstant-Namen
+    if(globaleList.functionList.get(functionName).tabelle.containsKey(ident.image) && !functionName.equals("main")){ // Das Symbol ist in der Symboltabelle der Funktion
         //Go, let find in this function
-        if(globaleList.getFunction(functionName).variableNames.contains(ident.image)){//Variable
+        if(globaleList.functionList.get(functionName).variableNames.contains(ident.image)){//Variable
             //print byte code
             i = Integer.parseInt(globaleList.getSymbol(functionName,ident.image));
             if( i<=15) str="150"+ Integer.toHexString(i);
@@ -317,7 +317,6 @@ if(check == null){ // Es handelt sich um einen Variablenamen oder Konstantnamen
     {if (true) return str;}
 }
 else{
-    System.out.println("function name is: " + functionName);
     if(globaleList.functionList.containsKey(ident.image)){
 
         exp = "b8(".concat( ident.image+")");
@@ -342,8 +341,8 @@ else{
     throw new Error("Missing return statement in function");
   }
 
-  static final public String condition(String functionName) throws ParseException, LWertException, RWertException, UnknowSymbolException {
-                                                                                                  String exp1=""; String exp2=""; Token vergleichToken=null; String ret="";
+  static final public String condition(String functionName) throws ParseException, WrongParametersException, LWertException, RWertException, UnknowSymbolException {
+                                                                                                                           String exp1=""; String exp2=""; Token vergleichToken=null; String ret="";
     exp1 = expression(functionName);
     vergleichToken = jj_consume_token(COMPOP);
     exp2 = expression(functionName);
@@ -365,15 +364,15 @@ else{
     throw new Error("Missing return statement in function");
   }
 
-  static final public String statement(String functionName) throws ParseException, LWertException, RWertException, UnknowSymbolException {
-                                                                                                  String temp=""; String stm = ""; String condStr = ""; String ret="";Token token=null;
+  static final public String statement(String functionName) throws ParseException, WrongParametersException, LWertException, RWertException, UnknowSymbolException {
+                                                                                                                           String temp=""; String stm = ""; String condStr = ""; String ret="";Token token=null;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case IDENT:
       token = jj_consume_token(IDENT);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case 24:
         jj_consume_token(24);
-        ret = procCall(functionName);
+        ret = procCall(functionName, token.image);
         break;
       case 22:
         jj_consume_token(22);
@@ -464,8 +463,8 @@ else{
     throw new Error("Missing return statement in function");
   }
 
-  static final public String optElse(String functionName) throws ParseException, LWertException, UnknowSymbolException, RWertException {
-                                                                                                String ret="";
+  static final public String optElse(String functionName) throws ParseException, WrongParametersException, LWertException, UnknowSymbolException, RWertException {
+                                                                                                                         String ret="";
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case ELSE:
       jj_consume_token(ELSE);
@@ -479,8 +478,8 @@ else{
     throw new Error("Missing return statement in function");
   }
 
-  static final public String stmtList(String functionName) throws ParseException, LWertException, UnknowSymbolException, RWertException {
-                                                                                                 String stm="";String list = "";
+  static final public String stmtList(String functionName) throws ParseException, WrongParametersException, LWertException, UnknowSymbolException, RWertException {
+                                                                                                                          String stm="";String list = "";
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case WHILE:
     case IF:
@@ -498,66 +497,76 @@ else{
     throw new Error("Missing return statement in function");
   }
 
-  static final public String functionCall(String functionName) throws ParseException, UnknowSymbolException, RWertException {
-                                                                                      String exp1=""; String exp2="";int paraCount=0;
+  static final public String functionCall(String functionName, String functionInline) throws ParseException, WrongParametersException, UnknowSymbolException, RWertException {
+                                                                                                                                      String exp1=""; String exp2="";int paraCount=0;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case NUMBER:
     case IDENT:
     case 24:
       exp1 = expression(functionName);
-      exp2 = expList(functionName);
-      break;
-    default:
-      jj_la1[17] = jj_gen;
-      ;
-    }
-    jj_consume_token(25);
-    {if (true) return exp1+exp2;}
-    throw new Error("Missing return statement in function");
-  }
-
-  static final public String expList(String functionName) throws ParseException, UnknowSymbolException, RWertException {
-                                                                                 String exp1=""; String exp2="";
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case 23:
-      jj_consume_token(23);
-      exp1 = expression(functionName);
-      exp2 = expList(functionName);
+                                 paraCount++;
+      label_1:
+      while (true) {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case 23:
+          ;
+          break;
+        default:
+          jj_la1[17] = jj_gen;
+          break label_1;
+        }
+        jj_consume_token(23);
+        exp2 = expression(functionName);
+                                                                                   paraCount++; exp1 += exp2;
+      }
       break;
     default:
       jj_la1[18] = jj_gen;
       ;
     }
-    {if (true) return exp1+exp2;}
+    jj_consume_token(25);
+    if(paraCount == globaleList.functionList.get(functionInline).paraNum)
+        {if (true) return exp1;}
+    else{
+        {if (true) throw new WrongParametersException("Wrong Parameter Number");}
+    }
     throw new Error("Missing return statement in function");
   }
 
 //procall
-  static final public String procCall(String functionName) throws ParseException, UnknowSymbolException, RWertException {
-                                                                                  String exp1=""; String exp2="";
+  static final public String procCall(String functionName, String functionInline) throws ParseException, WrongParametersException, UnknowSymbolException, RWertException {
+                                                                                                                                  String exp1=""; String exp2="";int paraCount=0;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case NUMBER:
     case IDENT:
     case 24:
-    case 25:
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case NUMBER:
-      case IDENT:
-      case 24:
-        exp1 = expression(functionName);
-        exp2 = expList(functionName);
-        break;
-      default:
-        jj_la1[19] = jj_gen;
-        ;
+      exp1 = expression(functionName);
+                                paraCount++;
+      label_2:
+      while (true) {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case 23:
+          ;
+          break;
+        default:
+          jj_la1[19] = jj_gen;
+          break label_2;
+        }
+        jj_consume_token(23);
+        exp2 = expression(functionName);
+                                                                                  paraCount++; exp1 += exp2;
       }
-      jj_consume_token(25);
       break;
     default:
       jj_la1[20] = jj_gen;
       ;
     }
-    {if (true) return exp1+exp2;}
+    jj_consume_token(25);
+    if(paraCount == globaleList.functionList.get(functionInline).paraNum)
+        {if (true) return exp1;}
+    else{
+        {if (true) throw new WrongParametersException("Wrong Parameter Number");}
+    }
     throw new Error("Missing return statement in function");
   }
 
@@ -592,8 +601,8 @@ System.out.println("How many parameter: " + ret);
   }
 
 //function /procedure scope. constDecl & varDerDecl können schon leer sein
-  static final public String routinenBlock(String functionName,int i) throws ParseException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
-                                                                                                                                                                       String varStr="";String stm="";
+  static final public String routinenBlock(String functionName,int i) throws ParseException, WrongParametersException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
+                                                                                                                                                                                                String varStr="";String stm="";
     constDecl(functionName);
     varStr = varDecl(functionName, i);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -613,11 +622,11 @@ System.out.println("How many parameter: " + ret);
   }
 
 // func def
-  static final public String function() throws ParseException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
-                                                                                                                                       String blockStr=""; String exp=""; int i=0; Token mName=null;
+  static final public String function() throws ParseException, WrongParametersException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
+                                                                                                                                                                String blockStr=""; String exp=""; int i=0; Token mName=null;
     jj_consume_token(FUNC);
     mName = jj_consume_token(IDENT);
-                          globaleList.setFunction(mName.image);
+                          GlobalKlasse.setFunction(mName.image);
     jj_consume_token(24);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case INT:
@@ -627,8 +636,9 @@ System.out.println("How many parameter: " + ret);
       jj_la1[23] = jj_gen;
       ;
     }
-                                                                                                          // set function parameter number
-globaleList.getFunction(mName.image).paraNum = i;
+    // set function parameter number
+    globaleList.getFunction(mName.image).paraNum = i;
+    System.out.println("mName : " + mName.image);
     jj_consume_token(25);
     jj_consume_token(26);
     blockStr = routinenBlock(mName.image, i);
@@ -644,12 +654,12 @@ globaleList.getFunction(mName.image).paraNum = i;
   }
 
 //procedure def
-  static final public String procedure() throws ParseException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
-                                                                                                                                        String blockStr="";int i=0; Token mName=null;
+  static final public String procedure() throws ParseException, WrongParametersException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
+                                                                                                                                                                 String blockStr="";int i=0; Token mName=null;
     jj_consume_token(VOID);
     mName = jj_consume_token(IDENT);
-                     // add function to list
-                             globaleList.setFunction(mName.image);
+ // add function to list
+    globaleList.setFunction(mName.image);
     jj_consume_token(24);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case INT:
@@ -659,15 +669,15 @@ globaleList.getFunction(mName.image).paraNum = i;
       jj_la1[24] = jj_gen;
       ;
     }
-// set function parameter number
-        globaleList.getFunction(mName.image).paraNum = i;
+    // set function parameter number
+    globaleList.getFunction(mName.image).paraNum = i;
     jj_consume_token(25);
     jj_consume_token(26);
     blockStr = routinenBlock(mName.image,i);
     jj_consume_token(27);
-        // store byte code
-        globaleList.getFunction(mName.image).byteCode = blockStr + "b1";
-{if (true) return blockStr+"b1";}
+    // store byte code
+    globaleList.getFunction(mName.image).byteCode = blockStr + "b1";
+    {if (true) return blockStr+"b1";}
     throw new Error("Missing return statement in function");
   }
 
@@ -687,7 +697,7 @@ globaleList.getFunction(mName.image).paraNum = i;
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x2000,0x1000,0x400,0x800000,0x800,0x400000,0x800000,0x300,0x300,0xc0,0xc0,0x1000000,0x1080020,0x1400000,0x409c000,0x20000,0x409c000,0x1080020,0x800000,0x1080020,0x3080020,0x800000,0x409c000,0x800,0x800,};
+      jj_la1_0 = new int[] {0x2000,0x1000,0x400,0x800000,0x800,0x400000,0x800000,0x300,0x300,0xc0,0xc0,0x1000000,0x1080020,0x1400000,0x409c000,0x20000,0x409c000,0x800000,0x1080020,0x800000,0x1080020,0x800000,0x409c000,0x800,0x800,};
    }
 
   /** Constructor with InputStream. */

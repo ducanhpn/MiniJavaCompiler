@@ -61,7 +61,7 @@ TOKEN : {
 <COMPOP : "=="|"!="|"<"|"<="|">"|">=">
 }
 
-void start() throws LWertException,RWertException,ConstantAlreadyException,SymbolAlreadyDefinedException, UnknowSymbolException:{String str="";}{
+void start() throws WrongParametersException,LWertException,RWertException,ConstantAlreadyException,SymbolAlreadyDefinedException, UnknowSymbolException:{String str="";}{
 str=programm()
 
 {str+="b1";}
@@ -76,18 +76,18 @@ str=programm()
 System.out.println(str);}
 }
 
-String programm() throws RWertException,LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException:{String str1=""; String str2="";String str3=""; String funcStr="";String procStr="";}{
+String programm() throws WrongParametersException,RWertException,LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException:{String str1=""; String str2="";String str3=""; String funcStr="";String procStr="";}{
  str1=constDecl("main") str2=varDecl("main",1) procStr=procList() funcStr=funcList() str3=statement("main")
- {
-return str1+str2+str3;}
+{
+    return str1+str2+str3;}
 }
-String procList() throws LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException: {String procStr=""; String listStr="";}{
+String procList() throws WrongParametersException,LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException: {String procStr=""; String listStr="";}{
     (procStr=procedure() listStr=procList() )?
 {
     return procStr + listStr;
 }
 }
-String funcList() throws LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException: {String funcStr=""; String listStr="";}{
+String funcList() throws WrongParametersException,LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException: {String funcStr=""; String listStr="";}{
     (funcStr=function() listStr=funcList() )?
     {
 
@@ -148,12 +148,12 @@ String varList(String functionName, int i) throws SymbolAlreadyDefinedException:
 return str1+str2;}
 }
 
-String expression(String functionName) throws  UnknowSymbolException,RWertException:{String strTerm=""; String strSumme="";}{
+String expression(String functionName) throws  WrongParametersException,UnknowSymbolException,RWertException:{String strTerm=""; String strSumme="";}{
  strTerm=term(functionName) strSumme=summe(functionName)
     {return strTerm+strSumme;}
 }
 
-String summe(String functionName) throws UnknowSymbolException,RWertException:{String strTerm=""; String strSumme="";Token plusToken=null; Token minusToken=null;}{
+String summe(String functionName) throws WrongParametersException,UnknowSymbolException,RWertException:{String strTerm=""; String strSumme="";Token plusToken=null; Token minusToken=null;}{
 ((plusToken=<PLUS>|minusToken=<MINUS>) strTerm=term(functionName) strSumme=summe(functionName))?
 {
     if(plusToken != null){
@@ -166,14 +166,14 @@ String summe(String functionName) throws UnknowSymbolException,RWertException:{S
 {return strTerm;}
 }
 
-String term(String functionName) throws UnknowSymbolException,RWertException:{String strFaktor=""; String strProduct="";}{
+String term(String functionName) throws WrongParametersException,UnknowSymbolException,RWertException:{String strFaktor=""; String strProduct="";}{
  strFaktor=faktor(functionName)  strProduct=product(functionName)
  {
     return strFaktor+strProduct;
 }
 }
 
-String product(String functionName) throws UnknowSymbolException,RWertException:{Token malToken=null; Token geteiltToken=null; String strFaktor=""; String strProduct="";}{
+String product(String functionName) throws WrongParametersException,UnknowSymbolException,RWertException:{Token malToken=null; Token geteiltToken=null; String strFaktor=""; String strProduct="";}{
 ((malToken=<MAL>|geteiltToken=<GETEILT>) strFaktor=faktor(functionName) strProduct=product(functionName))?
 {
     if(malToken!= null) strFaktor=strFaktor+"68"+strProduct;
@@ -182,7 +182,7 @@ String product(String functionName) throws UnknowSymbolException,RWertException:
 {return strFaktor;}
 }
 
-String faktor(String functionName) throws UnknowSymbolException,RWertException:{Token num=null; Token ident=null; String exp =""; String str="";int i=0;String tmp=""; Token check=null;}{
+String faktor(String functionName) throws WrongParametersException,UnknowSymbolException,RWertException:{Token num=null; Token ident=null; String exp =""; String str="";int i=0;String tmp=""; Token check=null;}{
  num=<NUMBER>
  {
     i = Integer.parseInt(num.image);
@@ -193,12 +193,12 @@ String faktor(String functionName) throws UnknowSymbolException,RWertException:{
      else str="11" + Integer.toHexString(i);
      return str;
 }
-| ident=<IDENT> (check="(" tmp=functionCall(functionName))?
+| ident=<IDENT> (check="(" tmp=functionCall(functionName, ident.image))?
 {
-if(check == null){ // Es handelt sich um einen Variablenamen oder Konstantnamen
-    if(globaleList.getFunction(functionName).tabelle.containsKey(ident.image) && !functionName.equals("main")){ // Das Symbol ist in der Symboltabelle der Funktion
+if(check == null){ // Es handelt sich um einen Variable-Namen oder Konstant-Namen
+    if(globaleList.functionList.get(functionName).tabelle.containsKey(ident.image) && !functionName.equals("main")){ // Das Symbol ist in der Symboltabelle der Funktion
         //Go, let find in this function
-        if(globaleList.getFunction(functionName).variableNames.contains(ident.image)){//Variable
+        if(globaleList.functionList.get(functionName).variableNames.contains(ident.image)){//Variable
             //print byte code
             i = Integer.parseInt(globaleList.getSymbol(functionName,ident.image));
             if( i<=15) str="150"+ Integer.toHexString(i);
@@ -246,7 +246,7 @@ else{
 {return exp;}
 }
 
-String condition(String functionName) throws LWertException,RWertException,UnknowSymbolException:{String exp1=""; String exp2=""; Token vergleichToken=null; String ret="";}{
+String condition(String functionName) throws WrongParametersException,LWertException,RWertException,UnknowSymbolException:{String exp1=""; String exp2=""; Token vergleichToken=null; String ret="";}{
     exp1=expression(functionName) vergleichToken=<COMPOP> exp2=expression(functionName)
     {
     //Hier ist die Java Code. Hier wird eine Bytecode String erstellt und der String wird genau an den Opcode für If beendet. Die String Länge wird danach gemessen
@@ -267,8 +267,8 @@ String condition(String functionName) throws LWertException,RWertException,Unkno
     }
 }
 
-String statement(String functionName) throws LWertException,RWertException,UnknowSymbolException:{String temp=""; String stm = ""; String condStr = ""; String ret="";Token token=null;}{
-token=<IDENT> ("(" ret=procCall(functionName) | "=" temp=expression(functionName) )  ";"
+String statement(String functionName) throws WrongParametersException,LWertException,RWertException,UnknowSymbolException:{String temp=""; String stm = ""; String condStr = ""; String ret="";Token token=null;}{
+token=<IDENT> ("(" ret=procCall(functionName, token.image) | "=" temp=expression(functionName) )  ";"
 
 {
     if(!temp.equals("")){ // Zuweisung
@@ -337,39 +337,40 @@ stm=optElse(functionName)
 
 }
 
-String optElse(String functionName) throws LWertException,UnknowSymbolException,RWertException:{String ret="";}{
+String optElse(String functionName) throws WrongParametersException,LWertException,UnknowSymbolException,RWertException:{String ret="";}{
 ("else" ret=statement(functionName))?
 {
     return ret;
 }
 }
 
-String stmtList(String functionName) throws LWertException,UnknowSymbolException,RWertException:{String stm="";String list = "";}{
+String stmtList(String functionName) throws WrongParametersException,LWertException,UnknowSymbolException,RWertException:{String stm="";String list = "";}{
 (stm=statement(functionName) list=stmtList(functionName))?
 {
     return stm + list;
 }
 }
 
-String functionCall(String functionName) throws UnknowSymbolException,RWertException:{String exp1=""; String exp2="";int paraCount=0;}{
- ( exp1=expression(functionName) exp2=expList(functionName) )? ")"
+String functionCall(String functionName, String functionInline) throws WrongParametersException,UnknowSymbolException,RWertException:{String exp1=""; String exp2="";int paraCount=0;}{
+ (exp1=expression(functionName) {paraCount++;} ("," exp2=expression(functionName) {paraCount++; exp1 += exp2;} )*)? ")"
 {
-    return exp1+exp2;
-}
-}
-
-String expList(String functionName) throws UnknowSymbolException,RWertException:{String exp1=""; String exp2="";}{
-("," exp1=expression(functionName) exp2=expList(functionName) )?
-{
-    return exp1+exp2;
+    if(paraCount == globaleList.functionList.get(functionInline).paraNum)
+        return exp1;
+    else{
+        throw new WrongParametersException("Wrong Parameter Number");
+    }
 }
 }
 
 //procall
-String procCall(String functionName) throws UnknowSymbolException,RWertException:{String exp1=""; String exp2="";}{
-( ( exp1=expression(functionName) exp2=expList(functionName) )? ")")?
+String procCall(String functionName, String functionInline) throws WrongParametersException,UnknowSymbolException,RWertException:{String exp1=""; String exp2="";int paraCount=0;}{
+(exp1=expression(functionName) {paraCount++;} ("," exp2=expression(functionName) {paraCount++; exp1 += exp2;} )*)? ")"
 {
-    return exp1+exp2;
+    if(paraCount == globaleList.functionList.get(functionInline).paraNum)
+        return exp1;
+    else{
+        throw new WrongParametersException("Wrong Parameter Number");
+    }
 }
 }
 
@@ -388,7 +389,7 @@ int parameterList(String functionName, int i) throws SymbolAlreadyDefinedExcepti
 }
 
 //function /procedure scope. constDecl & varDerDecl können schon leer sein
-String routinenBlock(String functionName,int i) throws  LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException:{ String varStr="";String stm="";}{
+String routinenBlock(String functionName,int i) throws  WrongParametersException,LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException:{ String varStr="";String stm="";}{
     constDecl(functionName) varStr=varDecl(functionName, i) (stm=statement(functionName))?
 {
     return varStr + stm;
@@ -396,11 +397,12 @@ String routinenBlock(String functionName,int i) throws  LWertException,RWertExce
 }
 
 // func def
-String function() throws LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException:{String blockStr=""; String exp=""; int i=0; Token mName=null;}{
-    <FUNC> mName=<IDENT> {globaleList.setFunction(mName.image);} "(" (i=routinenParameter(mName.image))?
+String function() throws WrongParametersException,LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException:{String blockStr=""; String exp=""; int i=0; Token mName=null;}{
+    <FUNC> mName=<IDENT> {GlobalKlasse.setFunction(mName.image);} "(" (i=routinenParameter(mName.image))?
 {
     // set function parameter number
     globaleList.getFunction(mName.image).paraNum = i;
+    System.out.println("mName : " + mName.image);
 }
      ")" "{" blockStr=routinenBlock(mName.image, i) "return" exp=expression(mName.image) ";" "}"
 {
@@ -411,7 +413,7 @@ String function() throws LWertException,RWertException,ConstantAlreadyException,
 }
 }
 //procedure def
-String procedure() throws LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException:{String blockStr="";int i=0; Token mName=null;}{
+String procedure() throws WrongParametersException,LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException:{String blockStr="";int i=0; Token mName=null;}{
 <VOID> mName=<IDENT>
 {// add function to list
     globaleList.setFunction(mName.image);}
