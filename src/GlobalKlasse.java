@@ -13,7 +13,6 @@ public class GlobalKlasse {
         functionList.put(functionName, new Symbole());
         // assign funtion name to Symbole instance
         functionList.get(functionName).functionName = functionName;
-        System.out.println("Set function seccessfull: " + functionName);
     }
 
     //create MethodObject Array from function list

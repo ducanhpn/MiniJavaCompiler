@@ -13,7 +13,6 @@ public class Symbole{
     }
     else{
       tabelle.put(id,wert);
-      System.out.println("add contant success");
     }
   }
 
@@ -26,7 +25,6 @@ public class Symbole{
       tabelle.put(variableName,address);
       //state[Integer.parseInt(address)] = value;
       variableNames.add(variableName);
-      System.out.println("add variable name :" + variableName + " Address: " + address);
     }
   }
   //getSymbol methode
@@ -57,10 +55,4 @@ class SymbolAlreadyDefinedException extends Exception {
   public SymbolAlreadyDefinedException(String message) { super(message);}
 }
 
-class WrongParametersException extends Exception{
-    public WrongParametersException(String message){super(message);}
-}
 
-class RWertException extends Exception{
-    public RWertException(String message){super(message);}
-}

@@ -18,20 +18,20 @@ public class MiniJavaProgram implements MiniJavaProgramConstants {
         abc.generateClassFile(objs);
     }
 
-  static final public void start() throws ParseException, LWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
-                                                                                                                  String str="";
+  static final public void start() throws ParseException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
+                                                                                                                                 String str="";
     str = programm();
  str+="b1";
-globaleList.getFunction("main").paraNum = 0;
-globaleList.getFunction("main").byteCode = str;
-globaleList.createSymbolTabelle();
+    globaleList.getFunction("main").paraNum = 0;
+    globaleList.getFunction("main").byteCode = str;
+    globaleList.createSymbolTabelle();
     jj_consume_token(0);
 //str =str.replaceAll("(?:\\w{2})","$0 ");
 System.out.println(str);
   }
 
-  static final public String programm() throws ParseException, LWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
-                                                                                                                        String str1=""; String str2="";String str3=""; String funcStr="";String procStr="";
+  static final public String programm() throws ParseException, RWertException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
+                                                                                                                                                      String str1=""; String str2="";String str3=""; String funcStr="";String procStr="";
     str1 = constDecl("main");
     str2 = varDecl("main",1);
     procStr = procList();
@@ -41,8 +41,8 @@ System.out.println(str);
     throw new Error("Missing return statement in function");
   }
 
-  static final public String procList() throws ParseException, LWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
-                                                                                                                         String procStr=""; String listStr="";
+  static final public String procList() throws ParseException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
+                                                                                                                                        String procStr=""; String listStr="";
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case VOID:
       procStr = procedure();
@@ -56,8 +56,8 @@ System.out.println(str);
     throw new Error("Missing return statement in function");
   }
 
-  static final public String funcList() throws ParseException, LWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
-                                                                                                                         String funcStr=""; String listStr="";
+  static final public String funcList() throws ParseException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
+                                                                                                                                        String funcStr=""; String listStr="";
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case FUNC:
       funcStr = function();
@@ -177,16 +177,16 @@ else str += index;
     throw new Error("Missing return statement in function");
   }
 
-  static final public String expression(String functionName) throws ParseException, UnknowSymbolException {
-                                                                      String strTerm=""; String strSumme="";
+  static final public String expression(String functionName) throws ParseException, UnknowSymbolException, RWertException {
+                                                                                     String strTerm=""; String strSumme="";
     strTerm = term(functionName);
     strSumme = summe(functionName);
      {if (true) return strTerm+strSumme;}
     throw new Error("Missing return statement in function");
   }
 
-  static final public String summe(String functionName) throws ParseException, UnknowSymbolException {
-                                                                String strTerm=""; String strSumme="";Token plusToken=null; Token minusToken=null;
+  static final public String summe(String functionName) throws ParseException, UnknowSymbolException, RWertException {
+                                                                               String strTerm=""; String strSumme="";Token plusToken=null; Token minusToken=null;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case PLUS:
     case MINUS:
@@ -219,16 +219,16 @@ else str += index;
     throw new Error("Missing return statement in function");
   }
 
-  static final public String term(String functionName) throws ParseException, UnknowSymbolException {
-                                                               String strFaktor=""; String strProduct="";
+  static final public String term(String functionName) throws ParseException, UnknowSymbolException, RWertException {
+                                                                              String strFaktor=""; String strProduct="";
     strFaktor = faktor(functionName);
     strProduct = product(functionName);
     {if (true) return strFaktor+strProduct;}
     throw new Error("Missing return statement in function");
   }
 
-  static final public String product(String functionName) throws ParseException, UnknowSymbolException {
-                                                                  Token malToken=null; Token geteiltToken=null; String strFaktor=""; String strProduct="";
+  static final public String product(String functionName) throws ParseException, UnknowSymbolException, RWertException {
+                                                                                 Token malToken=null; Token geteiltToken=null; String strFaktor=""; String strProduct="";
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case MAL:
     case GETEILT:
@@ -257,19 +257,18 @@ else str += index;
     throw new Error("Missing return statement in function");
   }
 
-  static final public String faktor(String functionName) throws ParseException, UnknowSymbolException {
-                                                                 Token num=null; Token ident=null; String exp =""; String str="";int i=0;String tmp=""; Token check=null;
+  static final public String faktor(String functionName) throws ParseException, UnknowSymbolException, RWertException {
+                                                                                Token num=null; Token ident=null; String exp =""; String str="";int i=0;String tmp=""; Token check=null;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case NUMBER:
       num = jj_consume_token(NUMBER);
     i = Integer.parseInt(num.image);
-
-            // print bytecode
-            if(i <= 15) str= "100" + Integer.toHexString(i);
-            else if(i <=255) str = "10" + Integer.toHexString(i);
-            else if(i <= 4095) str = "110" + Integer.toHexString(i);
-            else str="11" + Integer.toHexString(i);
-            {if (true) return str;}
+    // print bytecode
+     if(i <= 15) str= "100" + Integer.toHexString(i);
+     else if(i <=255) str = "10" + Integer.toHexString(i);
+     else if(i <= 4095) str = "110" + Integer.toHexString(i);
+     else str="11" + Integer.toHexString(i);
+     {if (true) return str;}
       break;
     case IDENT:
       ident = jj_consume_token(IDENT);
@@ -282,45 +281,51 @@ else str += index;
         jj_la1[11] = jj_gen;
         ;
       }
-if(check == null){
-    if(globaleList.getFunction(functionName).tabelle.containsKey(ident.image) && !functionName.equals("main")){ // es gibt symbol in der Symbole Tabelle
+if(check == null){ // Es handelt sich um einen Variablenamen oder Konstantnamen
+    if(globaleList.getFunction(functionName).tabelle.containsKey(ident.image) && !functionName.equals("main")){ // Das Symbol ist in der Symboltabelle der Funktion
         //Go, let find in this function
-        if(globaleList.getFunction(functionName).variableNames.contains(ident.image)){//variable
-                    //print byte code
-                    i = Integer.parseInt(globaleList.getSymbol(functionName,ident.image));
-                    if( i<=15) str="150"+ Integer.toHexString(i);
-                    else str = "15"+Integer.toHexString(i);
+        if(globaleList.getFunction(functionName).variableNames.contains(ident.image)){//Variable
+            //print byte code
+            i = Integer.parseInt(globaleList.getSymbol(functionName,ident.image));
+            if( i<=15) str="150"+ Integer.toHexString(i);
+            else str = "15"+Integer.toHexString(i);
         }
-        else{//konstant
-                    //print byte code
-                   i=Integer.parseInt(globaleList.getSymbol(functionName,ident.image));
-                   if( i<=15) str="100"+ Integer.toHexString(i);
-                   else str = "10"+Integer.toHexString(i);
+        else{//Konstant
+            //print byte code
+            i=Integer.parseInt(globaleList.getSymbol(functionName,ident.image));
+            if( i<=15) str="100"+ Integer.toHexString(i);
+            else str = "10"+Integer.toHexString(i);
         }
-
     }
-    else{ // find in main
+    else if(globaleList.getFunction("main").tabelle.containsKey(ident.image)){ // find in main
         if(globaleList.getFunction("main").variableNames.contains(ident.image)){//variable
-                    //print byte code
-                    i = Integer.parseInt(globaleList.getSymbol(functionName,ident.image));
-                    if( i<=15) str="150"+ Integer.toHexString(i);
-                    else str = "15"+Integer.toHexString(i);
-            }
-        else{//konstant
-                    //print byte code
-                    i=Integer.parseInt(globaleList.getSymbol("main",ident.image));
-                    if( i<=15) str="100"+ Integer.toHexString(i);
-                    else str = "10"+Integer.toHexString(i);
+            //print byte code
+            i = Integer.parseInt(globaleList.getSymbol(functionName,ident.image));
+            if( i<=15) str="150"+ Integer.toHexString(i);
+            else str = "15"+Integer.toHexString(i);
         }
-        //str = "b2["+ ident.image + "]"+str + "b3[" + ident.image + "]";
+        else{//konstant
+            //print byte code
+            i=Integer.parseInt(globaleList.getSymbol("main",ident.image));
+            if( i<=15) str="100"+ Integer.toHexString(i);
+            else str = "10"+Integer.toHexString(i);
+        }
     }
-
-    //return "b2["+ ident.image + "]"+str + "b3[" + ident.image + "]";
-    {if (true) return "b2[bX]" + str + "b3[bX]";}
+    else{
+        {if (true) throw new RWertException("Constant or Variable doesn't exist");}
+    }
+    {if (true) return str;}
 }
 else{
-    exp = "b8(".concat( ident.image+")");
-    {if (true) return tmp + exp;}
+    System.out.println("function name is: " + functionName);
+    if(globaleList.functionList.containsKey(ident.image)){
+
+        exp = "b8(".concat( ident.image+")");
+        {if (true) return tmp + exp;}
+    }
+    else{
+        {if (true) throw new RWertException("This function name doesn't exist");}
+    }
 }
       break;
     case 24:
@@ -337,8 +342,8 @@ else{
     throw new Error("Missing return statement in function");
   }
 
-  static final public String condition(String functionName) throws ParseException, LWertException, UnknowSymbolException {
-                                                                                   String exp1=""; String exp2=""; Token vergleichToken=null; String ret="";
+  static final public String condition(String functionName) throws ParseException, LWertException, RWertException, UnknowSymbolException {
+                                                                                                  String exp1=""; String exp2=""; Token vergleichToken=null; String ret="";
     exp1 = expression(functionName);
     vergleichToken = jj_consume_token(COMPOP);
     exp2 = expression(functionName);
@@ -360,8 +365,8 @@ else{
     throw new Error("Missing return statement in function");
   }
 
-  static final public String statement(String functionName) throws ParseException, LWertException, UnknowSymbolException {
-                                                                                   String temp=""; String stm = ""; String condStr = ""; String ret="";Token token=null;
+  static final public String statement(String functionName) throws ParseException, LWertException, RWertException, UnknowSymbolException {
+                                                                                                  String temp=""; String stm = ""; String condStr = ""; String ret="";Token token=null;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case IDENT:
       token = jj_consume_token(IDENT);
@@ -380,24 +385,24 @@ else{
         throw new ParseException();
       }
       jj_consume_token(21);
-if(!temp.equals("")){ // Zuweisung
-    ret = temp;
-    temp = token.image; // change temp to variable name
-    if(globaleList.getFunction(functionName).tabelle.containsKey(temp) || globaleList.getFunction("main").tabelle.containsKey(temp)){
-        ret += "36";
-        int i = Integer.parseInt(globaleList.getSymbol(functionName, temp));
+    if(!temp.equals("")){ // Zuweisung
+        ret = temp;
+        temp = token.image; // change temp to variable name
+        if(globaleList.getFunction(functionName).tabelle.containsKey(temp) || globaleList.getFunction("main").tabelle.containsKey(temp)){
+            ret += "36";
+            int i = Integer.parseInt(globaleList.getSymbol(functionName, temp));
 
-        if(i <= 15) ret+= "0"+Integer.toHexString(i);
-        else ret += Integer.toHexString(i);
-        {if (true) return ret;}
+            if(i <= 15) ret+= "0"+Integer.toHexString(i);
+            else ret += Integer.toHexString(i);
+            {if (true) return ret;}
+        }
+        else{
+            {if (true) throw new LWertException("variable doesn't exist");}
+        }
     }
     else{
-        {if (true) throw new LWertException("variable doesn't exist");}
+        {if (true) return ret+"b8(" + token.image +")";}
     }
-}
-else{
-{if (true) return ret+"b8(" + token.image +")";}
-}
       break;
     case PRINT:
       jj_consume_token(PRINT);
@@ -417,13 +422,12 @@ else{
       jj_consume_token(IF);
       condStr = condition(functionName);
       stm = statement(functionName);
-//ax xx xx a7 xx xx
-int i = (6+stm.length()+6) /2;
-if(i <= 15) condStr+= "000" + Integer.toHexString(i);
-else if(i <=255) condStr += "00" + Integer.toHexString(i);
-else if(i <= 4095) condStr += "0" + Integer.toHexString(i);
-else condStr+= Integer.toHexString(i);
-ret = condStr+stm+"a7";
+    int i = (6+stm.length()+6) /2;
+    if(i <= 15) condStr+= "000" + Integer.toHexString(i);
+    else if(i <=255) condStr += "00" + Integer.toHexString(i);
+    else if(i <= 4095) condStr += "0" + Integer.toHexString(i);
+    else condStr+= Integer.toHexString(i);
+    ret = condStr+stm+"a7";
       stm = optElse(functionName);
     i=(6+ stm.length()) / 2;
     if(i <= 15) ret+= "000" + Integer.toHexString(i);
@@ -460,8 +464,8 @@ ret = condStr+stm+"a7";
     throw new Error("Missing return statement in function");
   }
 
-  static final public String optElse(String functionName) throws ParseException, LWertException, UnknowSymbolException {
-                                                                                 String ret="";
+  static final public String optElse(String functionName) throws ParseException, LWertException, UnknowSymbolException, RWertException {
+                                                                                                String ret="";
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case ELSE:
       jj_consume_token(ELSE);
@@ -475,8 +479,8 @@ ret = condStr+stm+"a7";
     throw new Error("Missing return statement in function");
   }
 
-  static final public String stmtList(String functionName) throws ParseException, LWertException, UnknowSymbolException {
-                                                                                  String stm="";String list = "";
+  static final public String stmtList(String functionName) throws ParseException, LWertException, UnknowSymbolException, RWertException {
+                                                                                                 String stm="";String list = "";
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case WHILE:
     case IF:
@@ -494,8 +498,8 @@ ret = condStr+stm+"a7";
     throw new Error("Missing return statement in function");
   }
 
-  static final public String functionCall(String functionName) throws ParseException, UnknowSymbolException {
-                                                                       String exp1=""; String exp2="";int paraCount=0;
+  static final public String functionCall(String functionName) throws ParseException, UnknowSymbolException, RWertException {
+                                                                                      String exp1=""; String exp2="";int paraCount=0;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case NUMBER:
     case IDENT:
@@ -512,8 +516,8 @@ ret = condStr+stm+"a7";
     throw new Error("Missing return statement in function");
   }
 
-  static final public String expList(String functionName) throws ParseException, UnknowSymbolException {
-                                                                  String exp1=""; String exp2="";
+  static final public String expList(String functionName) throws ParseException, UnknowSymbolException, RWertException {
+                                                                                 String exp1=""; String exp2="";
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case 23:
       jj_consume_token(23);
@@ -529,8 +533,8 @@ ret = condStr+stm+"a7";
   }
 
 //procall
-  static final public String procCall(String functionName) throws ParseException, UnknowSymbolException {
-                                                                   String exp1=""; String exp2="";
+  static final public String procCall(String functionName) throws ParseException, UnknowSymbolException, RWertException {
+                                                                                  String exp1=""; String exp2="";
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case NUMBER:
     case IDENT:
@@ -588,8 +592,8 @@ System.out.println("How many parameter: " + ret);
   }
 
 //function /procedure scope. constDecl & varDerDecl können schon leer sein
-  static final public String routinenBlock(String functionName,int i) throws ParseException, LWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
-                                                                                                                                                        String varStr="";String stm="";
+  static final public String routinenBlock(String functionName,int i) throws ParseException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
+                                                                                                                                                                       String varStr="";String stm="";
     constDecl(functionName);
     varStr = varDecl(functionName, i);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -609,8 +613,8 @@ System.out.println("How many parameter: " + ret);
   }
 
 // func def
-  static final public String function() throws ParseException, LWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
-                                                                                                                        String blockStr=""; String exp=""; int i=0; Token mName=null;
+  static final public String function() throws ParseException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
+                                                                                                                                       String blockStr=""; String exp=""; int i=0; Token mName=null;
     jj_consume_token(FUNC);
     mName = jj_consume_token(IDENT);
                           globaleList.setFunction(mName.image);
@@ -640,8 +644,8 @@ globaleList.getFunction(mName.image).paraNum = i;
   }
 
 //procedure def
-  static final public String procedure() throws ParseException, LWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
-                                                                                                                         String blockStr="";int i=0; Token mName=null;
+  static final public String procedure() throws ParseException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
+                                                                                                                                        String blockStr="";int i=0; Token mName=null;
     jj_consume_token(VOID);
     mName = jj_consume_token(IDENT);
                      // add function to list

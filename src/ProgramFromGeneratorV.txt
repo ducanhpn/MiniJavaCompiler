@@ -2,7 +2,7 @@
 cafe babe 0000 0034
 
 :::constants table:::
-0022  // constants table size
+0021  // constants table size
   1: 07 0002 - Class @2
   2: 01 0014  50 72 6f 67 72 61 6d 46 72 6f 6d 47 65 6e 65 72 61 74 6f 72  - Constant "ProgramFromGenerator"
   3: 07 0004 - Class @4
@@ -26,16 +26,15 @@ cafe babe 0000 0034
  21: 01 0005  70 72 69 6e 74  - Constant "print"
  22: 0c 0015 000f - Name and type - name:@21, type:@15
  23: 0a 0001 0016 - Method reference - class:@1, NameAndType:@22
- 24: 01 0002  66 69  - Constant "fi"
+ 24: 01 0002  61 62  - Constant "ab"
  25: 01 0004  28 49 29 49  - Constant "(I)I"
  26: 0c 0018 0019 - Name and type - name:@24, type:@25
  27: 0a 0001 001a - Method reference - class:@1, NameAndType:@26
- 28: 01 0004  6d 61 69 6e  - Constant "main"
- 29: 01 0016  28 5b 4c 6a 61 76 61 2f 6c 61 6e 67 2f 53 74 72 69 6e 67 3b 29 56  - Constant "([Ljava/lang/String;)V"
- 30: 01 0002  62 58  - Constant "bX"
- 31: 01 0001  49  - Constant "I"
- 32: 0c 001e 001f - Name and type - name:@30, type:@31
- 33: 09 0001 0020 - Field reference - class:@1, NameAndType:@32
+ 28: 01 0002  66 69  - Constant "fi"
+ 29: 0c 001c 0019 - Name and type - name:@28, type:@25
+ 30: 0a 0001 001d - Method reference - class:@1, NameAndType:@29
+ 31: 01 0004  6d 61 69 6e  - Constant "main"
+ 32: 01 0016  28 5b 4c 6a 61 76 61 2f 6c 61 6e 67 2f 53 74 72 69 6e 67 3b 29 56  - Constant "([Ljava/lang/String;)V"
 
 :::class access flags, this class index, super class index:::
 0021 0001 0003
@@ -44,14 +43,11 @@ cafe babe 0000 0034
 0000
 
 :::fields table:::
-0001  // fields table size
+0000  // fields table size
 
-0008 // access flags
-001e // "bX" name index
-001f // "I" descriptor index
-0000 // field attributes table
+
 :::methods table:::
-0003  // methods table size
+0004  // methods table size
 
 ::: Method "print" :::
 0009  // access flags
@@ -71,27 +67,46 @@ b1     - return
 0000  // exceptions table
 0000  // attribute's attribute table
 
-::: Method "fi" :::
+::: Method "ab" :::
 0009  // access flags
 0018  // name index
 0019  // descriptor index
 0001  // method's attributes table
 0005  // "Code" index
-00000026  // attribute's length
-0005  // stack size
+00000015  // attribute's length
+0002  // stack size
 0001  // locals
-0000001a  // bytecode size
+00000009  // bytecode size
+
+****Your byte code for "ab" starts here****
+15 00  - iload
+10 01  - bipush
+60     - iadd
+b8 001e  - invokestatic
+ac     - ireturn
+
+0000  // exceptions table
+0000  // attribute's attribute table
+
+::: Method "fi" :::
+0009  // access flags
+001c  // name index
+0019  // descriptor index
+0001  // method's attributes table
+0005  // "Code" index
+0000001d  // attribute's length
+0003  // stack size
+0001  // locals
+00000011  // bytecode size
 
 ****Your byte code for "fi" starts here****
-b2 0021  - getstatic
 15 00  - iload
-b3 0021  - putstatic
 10 01  - bipush
 60     - iadd
 b8 0017  - invokestatic
-b2 0021  - getstatic
 15 00  - iload
-b3 0021  - putstatic
+10 0a  - bipush
+60     - iadd
 10 02  - bipush
 60     - iadd
 ac     - ireturn
@@ -101,21 +116,19 @@ ac     - ireturn
 
 ::: Method "main" :::
 0009  // access flags
-001c  // name index
-001d  // descriptor index
+001f  // name index
+0020  // descriptor index
 0001  // method's attributes table
 0005  // "Code" index
-0000001f  // attribute's length
-0002  // stack size
+00000019  // attribute's length
+0001  // stack size
 0002  // locals
-00000013  // bytecode size
+0000000d  // bytecode size
 
 ****Your byte code for "main" starts here****
 10 05  - bipush
 36 01  - istore
-b2 0021  - getstatic
-15 01  - iload
-b3 0021  - putstatic
+10 05  - bipush
 b8 001b  - invokestatic
 b8 0017  - invokestatic
 b1     - return
