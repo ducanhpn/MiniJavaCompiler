@@ -34,13 +34,4 @@ public class GlobalKlasse {
             return getFunction("main").getSymbol(id);
         }
     }
-
-    public static void addConstant(String functionName, String id, String wert) throws ConstantAlreadyException {
-        if(getFunction(functionName).tabelle.containsKey(id)){
-            throw new ConstantAlreadyException("This constant is already exist");
-        }
-        else{
-            getFunction(functionName).addConstant(id,wert);
-        }
-    }
 }

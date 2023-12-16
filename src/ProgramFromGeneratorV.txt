@@ -32,7 +32,7 @@ cafe babe 0000 0034
  27: 0a 0001 001a - Method reference - class:@1, NameAndType:@26
  28: 01 0004  6d 61 69 6e  - Constant "main"
  29: 01 0016  28 5b 4c 6a 61 76 61 2f 6c 61 6e 67 2f 53 74 72 69 6e 67 3b 29 56  - Constant "([Ljava/lang/String;)V"
- 30: 01 0002  61 58  - Constant "aX"
+ 30: 01 0002  62 58  - Constant "bX"
  31: 01 0001  49  - Constant "I"
  32: 0c 001e 001f - Name and type - name:@30, type:@31
  33: 09 0001 0020 - Field reference - class:@1, NameAndType:@32
@@ -47,7 +47,7 @@ cafe babe 0000 0034
 0001  // fields table size
 
 0008 // access flags
-001e // "aX" name index
+001e // "bX" name index
 001f // "I" descriptor index
 0000 // field attributes table
 :::methods table:::
@@ -84,13 +84,13 @@ b1     - return
 
 ****Your byte code for "fi" starts here****
 b2 0021  - getstatic
-10 00  - bipush
+15 00  - iload
 b3 0021  - putstatic
 10 01  - bipush
 60     - iadd
 b8 0017  - invokestatic
 b2 0021  - getstatic
-10 00  - bipush
+15 00  - iload
 b3 0021  - putstatic
 10 02  - bipush
 60     - iadd
@@ -111,10 +111,10 @@ ac     - ireturn
 00000013  // bytecode size
 
 ****Your byte code for "main" starts here****
-10 02  - bipush
+10 05  - bipush
 36 01  - istore
 b2 0021  - getstatic
-10 0a  - bipush
+15 01  - iload
 b3 0021  - putstatic
 b8 001b  - invokestatic
 b8 0017  - invokestatic

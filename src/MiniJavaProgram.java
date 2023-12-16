@@ -283,22 +283,21 @@ else str += index;
         ;
       }
 if(check == null){
-    if(globaleList.getFunction(functionName).tabelle.containsKey(ident.image)){ // es gibt Variable in der Symbole Tabelle
+    if(globaleList.getFunction(functionName).tabelle.containsKey(ident.image) && !functionName.equals("main")){ // es gibt symbol in der Symbole Tabelle
         //Go, let find in this function
         if(globaleList.getFunction(functionName).variableNames.contains(ident.image)){//variable
                     //print byte code
                     i = Integer.parseInt(globaleList.getSymbol(functionName,ident.image));
                     if( i<=15) str="150"+ Integer.toHexString(i);
                     else str = "15"+Integer.toHexString(i);
-                    //
-            }
-            else{//konstant
+        }
+        else{//konstant
                     //print byte code
-                    i=Integer.parseInt(globaleList.getSymbol(functionName,ident.image));
-                    if( i<=15) str="100"+ Integer.toHexString(i);
-                    else str = "10"+Integer.toHexString(i);
-                    //
-            }
+                   i=Integer.parseInt(globaleList.getSymbol(functionName,ident.image));
+                   if( i<=15) str="100"+ Integer.toHexString(i);
+                   else str = "10"+Integer.toHexString(i);
+        }
+
     }
     else{ // find in main
         if(globaleList.getFunction("main").variableNames.contains(ident.image)){//variable
@@ -306,20 +305,18 @@ if(check == null){
                     i = Integer.parseInt(globaleList.getSymbol(functionName,ident.image));
                     if( i<=15) str="150"+ Integer.toHexString(i);
                     else str = "15"+Integer.toHexString(i);
-                    //
             }
-            else{//konstant
+        else{//konstant
                     //print byte code
-
                     i=Integer.parseInt(globaleList.getSymbol("main",ident.image));
-
                     if( i<=15) str="100"+ Integer.toHexString(i);
                     else str = "10"+Integer.toHexString(i);
-                    //
-            }
+        }
+        //str = "b2["+ ident.image + "]"+str + "b3[" + ident.image + "]";
     }
 
-    {if (true) return "b2[aX]"+str+"b3[aX]";}
+    //return "b2["+ ident.image + "]"+str + "b3[" + ident.image + "]";
+    {if (true) return "b2[bX]" + str + "b3[bX]";}
 }
 else{
     exp = "b8(".concat( ident.image+")");
@@ -440,7 +437,6 @@ ret = condStr+stm+"a7";
       jj_consume_token(WHILE);
       condStr = condition(functionName);
       stm = statement(functionName);
- //
     i = stm.length() / 2 + 3 + 3;
     if(i <= 15) condStr+= "000" + Integer.toHexString(i);
     else if(i <=255) condStr += "00" + Integer.toHexString(i);
@@ -498,9 +494,8 @@ ret = condStr+stm+"a7";
     throw new Error("Missing return statement in function");
   }
 
-//function call ( optional )
   static final public String functionCall(String functionName) throws ParseException, UnknowSymbolException {
-                                                                       String exp1=""; String exp2="";
+                                                                       String exp1=""; String exp2="";int paraCount=0;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case NUMBER:
     case IDENT:
@@ -563,25 +558,25 @@ ret = condStr+stm+"a7";
   }
 
 // parameters
-  static final public int routinenParameter(String functionName) throws ParseException {
-                                            int i=0; Token vName=null; int ret =i;
+  static final public int routinenParameter(String functionName) throws ParseException, SymbolAlreadyDefinedException {
+                                                                                 int i=0; Token vName=null; int ret =i;
     jj_consume_token(INT);
     vName = jj_consume_token(IDENT);
-                     globaleList.getFunction(functionName).tabelle.put(vName.image,String.valueOf(i));i+=1; ret=i;
+                     globaleList.getFunction(functionName).addVariable(vName.image,String.valueOf(i));i+=1; ret=i;
     ret = parameterList(functionName, i);
 System.out.println("How many parameter: " + ret);
 {if (true) return ret;}
     throw new Error("Missing return statement in function");
   }
 
-  static final public int parameterList(String functionName, int i) throws ParseException {
-                                               Token vName=null;int ret=i;
+  static final public int parameterList(String functionName, int i) throws ParseException, SymbolAlreadyDefinedException {
+                                                                                    Token vName=null;int ret=i;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case 23:
       jj_consume_token(23);
       jj_consume_token(INT);
       vName = jj_consume_token(IDENT);
-                             globaleList.getFunction(functionName).tabelle.put(vName.image,String.valueOf(i));i++;ret=i;
+                             globaleList.getFunction(functionName).addVariable(vName.image,String.valueOf(i));i++;ret=i;
       ret = parameterList(functionName, i);
       break;
     default:
@@ -629,7 +624,7 @@ System.out.println("How many parameter: " + ret);
       ;
     }
                                                                                                           // set function parameter number
-                                                                                                              globaleList.getFunction(mName.image).paraNum = i;
+globaleList.getFunction(mName.image).paraNum = i;
     jj_consume_token(25);
     jj_consume_token(26);
     blockStr = routinenBlock(mName.image, i);
@@ -639,7 +634,7 @@ System.out.println("How many parameter: " + ret);
     jj_consume_token(27);
     // store byte code
     globaleList.getFunction(mName.image).byteCode = blockStr + exp + "ac" ;
-
+    System.out.println("function bytecode: " + mName.image + " : " + blockStr + exp + "ac");
     {if (true) return blockStr + exp + "ac";}
     throw new Error("Missing return statement in function");
   }

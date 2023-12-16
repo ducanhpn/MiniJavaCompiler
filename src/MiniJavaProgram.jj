@@ -119,8 +119,8 @@ String varDecl(String functionName, int i) throws SymbolAlreadyDefinedException:
 
 (<INT> varName=<IDENT> str1=varZuw(functionName, varName,i) str2=varList(functionName, i+1) ";")?
 {
-return str1+str2;}
 
+return str1+str2;}
 }
 
 String varZuw(String functionName, Token varName,int index) throws SymbolAlreadyDefinedException:{Token value=null; String str="";}{
@@ -195,22 +195,21 @@ String faktor(String functionName) throws UnknowSymbolException:{Token num=null;
 }
 | ident=<IDENT> (check="(" tmp=functionCall(functionName))?{
 if(check == null){
-    if(globaleList.getFunction(functionName).tabelle.containsKey(ident.image)){ // es gibt Variable in der Symbole Tabelle
+    if(globaleList.getFunction(functionName).tabelle.containsKey(ident.image) && !functionName.equals("main")){ // es gibt symbol in der Symbole Tabelle
         //Go, let find in this function
         if(globaleList.getFunction(functionName).variableNames.contains(ident.image)){//variable
                     //print byte code
                     i = Integer.parseInt(globaleList.getSymbol(functionName,ident.image));
                     if( i<=15) str="150"+ Integer.toHexString(i);
                     else str = "15"+Integer.toHexString(i);
-                    //
-            }
-            else{//konstant
+        }
+        else{//konstant
                     //print byte code
-                    i=Integer.parseInt(globaleList.getSymbol(functionName,ident.image));
-                    if( i<=15) str="100"+ Integer.toHexString(i);
-                    else str = "10"+Integer.toHexString(i);
-                    //
-            }
+                   i=Integer.parseInt(globaleList.getSymbol(functionName,ident.image));
+                   if( i<=15) str="100"+ Integer.toHexString(i);
+                   else str = "10"+Integer.toHexString(i);
+        }
+
     }
     else{ // find in main
         if(globaleList.getFunction("main").variableNames.contains(ident.image)){//variable
@@ -218,20 +217,18 @@ if(check == null){
                     i = Integer.parseInt(globaleList.getSymbol(functionName,ident.image));
                     if( i<=15) str="150"+ Integer.toHexString(i);
                     else str = "15"+Integer.toHexString(i);
-                    //
             }
-            else{//konstant
+        else{//konstant
                     //print byte code
-
                     i=Integer.parseInt(globaleList.getSymbol("main",ident.image));
-
                     if( i<=15) str="100"+ Integer.toHexString(i);
                     else str = "10"+Integer.toHexString(i);
-                    //
-            }
+        }
+        //str = "b2["+ ident.image + "]"+str + "b3[" + ident.image + "]";
     }
 
-    return "b2[aX]"+str+"b3[aX]";
+    //return "b2["+ ident.image + "]"+str + "b3[" + ident.image + "]";
+    return "b2[bX]" + str + "b3[bX]";
 }
 else{
     exp = "b8(".concat( ident.image+")");
@@ -314,7 +311,7 @@ stm=optElse(functionName)
     return ret;
 }|
 <WHILE> condStr=condition(functionName) stm=statement(functionName)
-{//
+{
     i = stm.length() / 2 + 3 + 3;
     if(i <= 15) condStr+= "000" + Integer.toHexString(i);
     else if(i <=255) condStr += "00" + Integer.toHexString(i);
@@ -348,10 +345,7 @@ String stmtList(String functionName) throws LWertException,UnknowSymbolException
 }
 }
 
-
-
-//function call ( optional )
-String functionCall(String functionName) throws UnknowSymbolException:{String exp1=""; String exp2="";}{
+String functionCall(String functionName) throws UnknowSymbolException:{String exp1=""; String exp2="";int paraCount=0;}{
  ( exp1=expression(functionName) exp2=expList(functionName) )? ")"
 {
     return exp1+exp2;
@@ -374,16 +368,16 @@ String procCall(String functionName) throws UnknowSymbolException:{String exp1="
 }
 
 // parameters
-int routinenParameter(String functionName):{int i=0; Token vName=null; int ret =i;}{
-<INT> vName=<IDENT> {globaleList.getFunction(functionName).tabelle.put(vName.image,String.valueOf(i));i+=1; ret=i;} ret=parameterList(functionName, i)
+int routinenParameter(String functionName) throws SymbolAlreadyDefinedException:{int i=0; Token vName=null; int ret =i;}{
+<INT> vName=<IDENT> {globaleList.getFunction(functionName).addVariable(vName.image,String.valueOf(i));i+=1; ret=i;} ret=parameterList(functionName, i)
 {
 System.out.println("How many parameter: " + ret);
 return ret;
 }
 }
 
-int parameterList(String functionName, int i):{Token vName=null;int ret=i;}{
-   ("," <INT> vName=<IDENT> {globaleList.getFunction(functionName).tabelle.put(vName.image,String.valueOf(i));i++;ret=i;} ret=parameterList(functionName, i))?
+int parameterList(String functionName, int i) throws SymbolAlreadyDefinedException:{Token vName=null;int ret=i;}{
+   ("," <INT> vName=<IDENT> {globaleList.getFunction(functionName).addVariable(vName.image,String.valueOf(i));i++;ret=i;} ret=parameterList(functionName, i))?
    {return ret;}
 }
 
@@ -398,13 +392,13 @@ String routinenBlock(String functionName,int i) throws  LWertException,ConstantA
 // func def
 String function() throws LWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException:{String blockStr=""; String exp=""; int i=0; Token mName=null;}{
     <FUNC> mName=<IDENT> {globaleList.setFunction(mName.image);} "(" (i=routinenParameter(mName.image))? {// set function parameter number
-                                                                                                              globaleList.getFunction(mName.image).paraNum = i;}
+globaleList.getFunction(mName.image).paraNum = i;}
      ")" "{" blockStr=routinenBlock(mName.image, i) "return" exp=expression(mName.image) ";" "}"
 {
 
     // store byte code
     globaleList.getFunction(mName.image).byteCode = blockStr + exp + "ac" ;
-
+    System.out.println("function bytecode: " + mName.image + " : " + blockStr + exp + "ac");
     return blockStr + exp + "ac";
 }
 }
