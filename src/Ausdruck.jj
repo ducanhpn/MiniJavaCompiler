@@ -1,0 +1,104 @@
+PARSER_BEGIN(Ausdruck)
+
+public class Ausdruck {
+    //Klasse Variable initialisieren
+    public static Symbole symbole;
+    public static void main(String args[]){
+        Ausdruck parser = new Ausdruck(System.in);
+        try {
+            parser.start();
+            }catch (ParseException e)
+            { System.err.println(e);}
+            catch (ConstantAlreadyException e){
+            System.err.println(e);
+            }
+    }
+}
+
+PARSER_END(Ausdruck)
+
+SKIP : {
+    "\r"|"\n"|"\t"|" "
+}
+TOKEN : {
+<NUMBER : ["1"-"9"] (["0"-"9"])* | "0" >
+|
+<PRO : ["*","/"]>
+|
+<SUTR : ["+","-"]>
+|
+<FINAL : "final">
+|
+<INT : "int">
+|
+<IDENT : ["a"-"z"](["a"-"z","A"-"Z","0"-"9"])*>
+}
+
+void start() throws ConstantAlreadyException:{String erg;}
+{
+constDecl()
+erg=expre()
+<EOF>
+{System.out.println(erg);}
+}
+ String expre():{String str="";}
+ {
+     str = summe()
+    {return str;}
+ }
+
+
+
+ String summe():{ String t1="";
+                String t2="";
+                String t3="";
+                Token op=null;
+                String str="";}
+ {
+    {t1=produkt()+" ";}  (op=<SUTR> {/*if(op!=null)*/t3=op.image+" ";t2=(produkt() +" "); str+=(t2+t3);})*
+    {t1+=str;}
+    {return t1;}
+ }
+ String produkt():
+ {
+ String t1="";
+ String t2="";
+ String t3="";
+ Token op=null;
+ String str="";
+}
+ {
+    {t1=term()+" ";} (op=<PRO> {if(op != null)t3=op.image+" ";t2=(term() +" "); str +=(t2+t3);})*
+    {t1 += str;}
+    {return t1;}
+ }
+ String term():{Token t=null; Token i=null;
+String str="";}
+ {
+     "(" {str=expre();} ")"{return str;} | t = <NUMBER> {if(t!=null)str=t.image;}{return str;} |
+    i = <IDENT> {try{str = symbole.getSymbol(i.image);}catch(Exception e){System.out.println(e);}}
+    {return str;}
+ }
+
+ // Konstant Zuweisung
+void constDecl() throws ConstantAlreadyException:{}{
+ <FINAL> <INT> constZuw() (constList())* ";"
+}
+
+void constZuw() throws ConstantAlreadyException:{
+Token t1=null;
+Token t2=null;}{
+    t1 = <IDENT> "=" t2 = <NUMBER>
+    {
+     symbole.addConstant(t1.image,t2.image);
+    }
+}
+
+void constList() throws ConstantAlreadyException:{}{
+ ","constZuw() constList() | ""
+}
+
+
+
+
+

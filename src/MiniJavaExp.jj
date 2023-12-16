@@ -1,0 +1,91 @@
+PARSER_BEGIN(MiniJavaExp)
+
+public class  MiniJavaExp{
+    public static void main(String arg[]){
+        MiniJavaExp parser = new MiniJavaExp(System.in);
+        try{
+            parser.start();
+        }catch(Exception e){
+            System.out.println(e);
+        }
+    }
+}
+PARSER_END(MiniJavaExp)
+
+SKIP:{
+ "\r"|"\n"|"\t"|" "
+}
+TOKEN : {
+<NUMBER : ["1"-"9"] (["0"-"9"])* | "0" >
+|
+<PRODUCT_OP : ["*","/"]>
+|
+<PLUS_MINUS : ["+","-"]>
+|
+<FINAL : "final">
+|
+<INT : "int">
+|
+<IDENT : ["a"-"z"](["a"-"z","A"-"Z","0"-"9"])*>
+}
+
+void start():{}{
+programm()
+<EOF>
+{System.out.println("Programm syntaktisch ok!");}
+}
+
+void programm():{}{
+ constDecl() varDecl() statement()
+}
+
+//const declaration
+void constDecl():{}{
+(<FINAL> <INT> constZuw() constList() ";")?
+}
+
+void constZuw():{}{
+<IDENT> "=" <NUMBER>
+}
+
+void constList():{}{
+("," constZuw() constList())?
+}
+
+//variable declaration
+void varDecl():{}{
+(<INT> <IDENT> varZuw() varList() ";")?
+
+}
+
+void varZuw():{Token n1= null;}{
+("=" n1=<NUMBER> )?
+{System.out.print("10 " + n1.image);}
+}
+
+void varList():{}{
+("," <IDENT> varZuw() varList())?
+}
+
+void expression():{}{
+ term() summe()
+}
+
+void summe():{}{
+(<PLUS_MINUS> term() summe())?
+}
+
+void term():{}{
+ faktor()  product()
+}
+
+void product():{}{
+(<PRODUCT_OP> faktor() product())?
+}
+
+void faktor():{}{
+ <NUMBER> | <IDENT>  | "(" expression() ")"
+}
+void statement():{}{
+"print" "(" expression() ")" ";"
+}
