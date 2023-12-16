@@ -73,15 +73,13 @@ b1     - return
 0019  // descriptor index
 0001  // method's attributes table
 0005  // "Code" index
-00000015  // attribute's length
-0002  // stack size
+00000012  // attribute's length
+0001  // stack size
 0001  // locals
-00000009  // bytecode size
+00000006  // bytecode size
 
 ****Your byte code for "ab" starts here****
 15 00  - iload
-10 01  - bipush
-60     - iadd
 b8 001e  - invokestatic
 ac     - ireturn
 

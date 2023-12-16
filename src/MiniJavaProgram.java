@@ -4,27 +4,27 @@ public class MiniJavaProgram implements MiniJavaProgramConstants {
     public static GlobalKlasse globaleList;
     public static JavaClassFileGenerator abc = new JavaClassFileGenerator("ProgramFromGenerator",true,true,true);
 
-    public static void main(String args[]){
+    public static void main(String[] args){
         MiniJavaProgram parser = new MiniJavaProgram(System.in);
         try{
-            globaleList.setFunction("main");
+            GlobalKlasse.setFunction("main");
             parser.start();
         }catch(Exception e){
-            System.out.println(e);
+            e.printStackTrace();
         }
 
-        MethodObject[] objs = new MethodObject[globaleList.objectsList.size()];
-        objs = globaleList.objectsList.toArray(objs);
-        abc.generateClassFile(objs);
+        MethodObject[] objects = new MethodObject[GlobalKlasse.objectsList.size()];
+        objects = GlobalKlasse.objectsList.toArray(objects);
+        abc.generateClassFile(objects);
     }
 
   static final public void start() throws ParseException, WrongParametersException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
                                                                                                                                                           String str="";
     str = programm();
- str+="b1";
-    globaleList.getFunction("main").paraNum = 0;
-    globaleList.getFunction("main").byteCode = str;
-    globaleList.createSymbolTabelle();
+    str+="b1";
+    GlobalKlasse.getFunction("main").paraNum = 0;
+    GlobalKlasse.getFunction("main").byteCode = str;
+    GlobalKlasse.createSymbolTabelle();
     jj_consume_token(0);
 //str =str.replaceAll("(?:\\w{2})","$0 ");
 System.out.println(str);
@@ -95,7 +95,7 @@ System.out.println(str);
     t1 = jj_consume_token(IDENT);
     jj_consume_token(22);
     t2 = jj_consume_token(NUMBER);
-    globaleList.getFunction(functionName).addConstant(t1.image, t2.image);
+    GlobalKlasse.getFunction(functionName).addConstant(t1.image, t2.image);
     if(functionName.equals("main")) {if (true) return "";}
     {if (true) return "";}
     throw new Error("Missing return statement in function");
@@ -148,7 +148,7 @@ int i;
 if(value==null) i=0 ;
 else i = Integer.parseInt(value.image);
 //add variable
-globaleList.getFunction(functionName).addVariable(varName.image, String.valueOf(index));
+GlobalKlasse.getFunction(functionName).addVariable(varName.image, String.valueOf(index));
 if(i <= 15) {str= "100" + Integer.toHexString(i);}
 else if(i <=255) str = "10" + Integer.toHexString(i);
 else if(i <= 4095) str = "110" + Integer.toHexString(i);
@@ -282,31 +282,31 @@ else str += index;
         ;
       }
 if(check == null){ // Es handelt sich um einen Variable-Namen oder Konstant-Namen
-    if(globaleList.functionList.get(functionName).tabelle.containsKey(ident.image) && !functionName.equals("main")){ // Das Symbol ist in der Symboltabelle der Funktion
+    if(GlobalKlasse.functionList.get(functionName).tabelle.containsKey(ident.image) && !functionName.equals("main")){ // Das Symbol ist in der Symboltabelle der Funktion
         //Go, let find in this function
-        if(globaleList.functionList.get(functionName).variableNames.contains(ident.image)){//Variable
+        if(GlobalKlasse.functionList.get(functionName).variableNames.contains(ident.image)){//Variable
             //print byte code
-            i = Integer.parseInt(globaleList.getSymbol(functionName,ident.image));
+            i = Integer.parseInt(GlobalKlasse.getSymbol(functionName,ident.image));
             if( i<=15) str="150"+ Integer.toHexString(i);
             else str = "15"+Integer.toHexString(i);
         }
         else{//Konstant
             //print byte code
-            i=Integer.parseInt(globaleList.getSymbol(functionName,ident.image));
+            i=Integer.parseInt(GlobalKlasse.getSymbol(functionName,ident.image));
             if( i<=15) str="100"+ Integer.toHexString(i);
             else str = "10"+Integer.toHexString(i);
         }
     }
-    else if(globaleList.getFunction("main").tabelle.containsKey(ident.image)){ // find in main
-        if(globaleList.getFunction("main").variableNames.contains(ident.image)){//variable
+    else if(GlobalKlasse.getFunction("main").tabelle.containsKey(ident.image)){ // find in main
+        if(GlobalKlasse.getFunction("main").variableNames.contains(ident.image)){//variable
             //print byte code
-            i = Integer.parseInt(globaleList.getSymbol(functionName,ident.image));
+            i = Integer.parseInt(GlobalKlasse.getSymbol(functionName,ident.image));
             if( i<=15) str="150"+ Integer.toHexString(i);
             else str = "15"+Integer.toHexString(i);
         }
         else{//konstant
             //print byte code
-            i=Integer.parseInt(globaleList.getSymbol("main",ident.image));
+            i=Integer.parseInt(GlobalKlasse.getSymbol("main",ident.image));
             if( i<=15) str="100"+ Integer.toHexString(i);
             else str = "10"+Integer.toHexString(i);
         }
@@ -317,7 +317,7 @@ if(check == null){ // Es handelt sich um einen Variable-Namen oder Konstant-Name
     {if (true) return str;}
 }
 else{
-    if(globaleList.functionList.containsKey(ident.image)){
+    if(GlobalKlasse.functionList.containsKey(ident.image)){
 
         exp = "b8(".concat( ident.image+")");
         {if (true) return tmp + exp;}
@@ -346,7 +346,7 @@ else{
     exp1 = expression(functionName);
     vergleichToken = jj_consume_token(COMPOP);
     exp2 = expression(functionName);
-    //Hier ist die Java Code. Hier wird eine Bytecode String erstellt und der String wird genau an den Opcode für If beendet. Die String Länge wird danach gemessen
+    //Hier ist die Java Code. Hier wird eine Bytecode String erstellt und der String wird genau an den Opcode für If beendet. Die String Länge wird danach gemessen.
     //indem wir die String Länge durch 2 geteilt. Hier entscheiden wir nur, welche Bytecode mit der Opcode passt.
         ret += exp1;
         ret += exp2;
@@ -387,9 +387,9 @@ else{
     if(!temp.equals("")){ // Zuweisung
         ret = temp;
         temp = token.image; // change temp to variable name
-        if(globaleList.getFunction(functionName).tabelle.containsKey(temp) || globaleList.getFunction("main").tabelle.containsKey(temp)){
+        if(GlobalKlasse.getFunction(functionName).tabelle.containsKey(temp) || GlobalKlasse.getFunction("main").tabelle.containsKey(temp)){
             ret += "36";
-            int i = Integer.parseInt(globaleList.getSymbol(functionName, temp));
+            int i = Integer.parseInt(GlobalKlasse.getSymbol(functionName, temp));
 
             if(i <= 15) ret+= "0"+Integer.toHexString(i);
             else ret += Integer.toHexString(i);
@@ -525,7 +525,7 @@ else{
       ;
     }
     jj_consume_token(25);
-    if(paraCount == globaleList.functionList.get(functionInline).paraNum)
+    if(paraCount == GlobalKlasse.functionList.get(functionInline).paraNum)
         {if (true) return exp1;}
     else{
         {if (true) throw new WrongParametersException("Wrong Parameter Number");}
@@ -562,7 +562,7 @@ else{
       ;
     }
     jj_consume_token(25);
-    if(paraCount == globaleList.functionList.get(functionInline).paraNum)
+    if(paraCount == GlobalKlasse.functionList.get(functionInline).paraNum)
         {if (true) return exp1;}
     else{
         {if (true) throw new WrongParametersException("Wrong Parameter Number");}
@@ -575,7 +575,7 @@ else{
                                                                                  int i=0; Token vName=null; int ret =i;
     jj_consume_token(INT);
     vName = jj_consume_token(IDENT);
-                     globaleList.getFunction(functionName).addVariable(vName.image,String.valueOf(i));i+=1; ret=i;
+                     GlobalKlasse.getFunction(functionName).addVariable(vName.image,String.valueOf(i));i+=1; ret=i;
     ret = parameterList(functionName, i);
 System.out.println("How many parameter: " + ret);
 {if (true) return ret;}
@@ -589,7 +589,7 @@ System.out.println("How many parameter: " + ret);
       jj_consume_token(23);
       jj_consume_token(INT);
       vName = jj_consume_token(IDENT);
-                             globaleList.getFunction(functionName).addVariable(vName.image,String.valueOf(i));i++;ret=i;
+                             GlobalKlasse.getFunction(functionName).addVariable(vName.image,String.valueOf(i));i++;ret=i;
       ret = parameterList(functionName, i);
       break;
     default:
@@ -637,7 +637,7 @@ System.out.println("How many parameter: " + ret);
       ;
     }
     // set function parameter number
-    globaleList.getFunction(mName.image).paraNum = i;
+    GlobalKlasse.getFunction(mName.image).paraNum = i;
     System.out.println("mName : " + mName.image);
     jj_consume_token(25);
     jj_consume_token(26);
@@ -647,7 +647,7 @@ System.out.println("How many parameter: " + ret);
     jj_consume_token(21);
     jj_consume_token(27);
     // store byte code
-    globaleList.getFunction(mName.image).byteCode = blockStr + exp + "ac" ;
+    GlobalKlasse.getFunction(mName.image).byteCode = blockStr + exp + "ac" ;
     System.out.println("function bytecode: " + mName.image + " : " + blockStr + exp + "ac");
     {if (true) return blockStr + exp + "ac";}
     throw new Error("Missing return statement in function");
@@ -659,7 +659,7 @@ System.out.println("How many parameter: " + ret);
     jj_consume_token(VOID);
     mName = jj_consume_token(IDENT);
  // add function to list
-    globaleList.setFunction(mName.image);
+GlobalKlasse.setFunction(mName.image);
     jj_consume_token(24);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case INT:
@@ -670,13 +670,13 @@ System.out.println("How many parameter: " + ret);
       ;
     }
     // set function parameter number
-    globaleList.getFunction(mName.image).paraNum = i;
+    GlobalKlasse.getFunction(mName.image).paraNum = i;
     jj_consume_token(25);
     jj_consume_token(26);
     blockStr = routinenBlock(mName.image,i);
     jj_consume_token(27);
     // store byte code
-    globaleList.getFunction(mName.image).byteCode = blockStr + "b1";
+    GlobalKlasse.getFunction(mName.image).byteCode = blockStr + "b1";
     {if (true) return blockStr+"b1";}
     throw new Error("Missing return statement in function");
   }
