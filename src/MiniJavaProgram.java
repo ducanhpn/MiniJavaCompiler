@@ -17,8 +17,8 @@ public class MiniJavaProgram implements MiniJavaProgramConstants {
         abc.generateClassFile(objects);
     }
 
-  static final public void start() throws ParseException, WrongParametersException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
-                                                                                                                                                          String str="";
+  static final public void start() throws ParseException, GleicheFunktionNameException, WrongParametersException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
+                                                                                                                                                                                       String str="";
     str = programm();
     str+="b1";
     GlobalKlasse.getFunction("main").paraNum = 0;
@@ -29,8 +29,8 @@ public class MiniJavaProgram implements MiniJavaProgramConstants {
 System.out.println(str);
   }
 
-  static final public String programm() throws ParseException, WrongParametersException, RWertException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
-                                                                                                                                                                               String str1=""; String str2="";String str3=""; String funcStr="";String procStr="";
+  static final public String programm() throws ParseException, GleicheFunktionNameException, WrongParametersException, RWertException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
+                                                                                                                                                                                                            String str1=""; String str2="";String str3=""; String funcStr="";String procStr="";
     str1 = constDecl("main");
     str2 = varDecl("main",1);
     procStr = procList();
@@ -40,8 +40,8 @@ System.out.println(str);
     throw new Error("Missing return statement in function");
   }
 
-  static final public String procList() throws ParseException, WrongParametersException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
-                                                                                                                                                                 String procStr=""; String listStr="";
+  static final public String procList() throws ParseException, GleicheFunktionNameException, WrongParametersException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
+                                                                                                                                                                                              String procStr=""; String listStr="";
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case VOID:
       procStr = procedure();
@@ -55,8 +55,8 @@ System.out.println(str);
     throw new Error("Missing return statement in function");
   }
 
-  static final public String funcList() throws ParseException, WrongParametersException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
-                                                                                                                                                                 String funcStr=""; String listStr="";
+  static final public String funcList() throws ParseException, GleicheFunktionNameException, WrongParametersException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
+                                                                                                                                                                                              String funcStr=""; String listStr="";
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case FUNC:
       funcStr = function();
@@ -524,11 +524,13 @@ else{
       ;
     }
     jj_consume_token(25);
+if(GlobalKlasse.functionList.get(functionInline) != null)
     if(paraCount == GlobalKlasse.functionList.get(functionInline).paraNum)
         {if (true) return exp1;}
     else{
         {if (true) throw new WrongParametersException("Wrong Parameter Number");}
     }
+else {if (true) return "";}
     throw new Error("Missing return statement in function");
   }
 
@@ -620,8 +622,8 @@ else{
   }
 
 // func def
-  static final public String function() throws ParseException, WrongParametersException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
-                                                                                                                                                                String blockStr=""; String exp=""; int i=0; Token mName=null;
+  static final public String function() throws ParseException, GleicheFunktionNameException, WrongParametersException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
+                                                                                                                                                                                             String blockStr=""; String exp=""; int i=0; Token mName=null;
     jj_consume_token(FUNC);
     mName = jj_consume_token(IDENT);
                           GlobalKlasse.setFunction(mName.image);
@@ -650,8 +652,8 @@ else{
   }
 
 //procedure def
-  static final public String procedure() throws ParseException, WrongParametersException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
-                                                                                                                                                                 String blockStr="";int i=0; Token mName=null;
+  static final public String procedure() throws ParseException, GleicheFunktionNameException, WrongParametersException, LWertException, RWertException, ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException {
+                                                                                                                                                                                              String blockStr="";int i=0; Token mName=null;
     jj_consume_token(VOID);
     mName = jj_consume_token(IDENT);
     // add function to list

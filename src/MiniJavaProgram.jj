@@ -59,7 +59,7 @@ TOKEN : {
 <COMPOP : "=="|"!="|"<"|"<="|">"|">=">
 }
 
-void start() throws WrongParametersException,LWertException,RWertException,ConstantAlreadyException,SymbolAlreadyDefinedException, UnknowSymbolException:{String str="";}{
+void start() throws GleicheFunktionNameException,WrongParametersException,LWertException,RWertException,ConstantAlreadyException,SymbolAlreadyDefinedException, UnknowSymbolException:{String str="";}{
 str=programm()
 
 {
@@ -74,18 +74,18 @@ str=programm()
 System.out.println(str);}
 }
 
-String programm() throws WrongParametersException,RWertException,LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException:{String str1=""; String str2="";String str3=""; String funcStr="";String procStr="";}{
+String programm() throws GleicheFunktionNameException,WrongParametersException,RWertException,LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException:{String str1=""; String str2="";String str3=""; String funcStr="";String procStr="";}{
  str1=constDecl("main") str2=varDecl("main",1) procStr=procList() funcStr=funcList() str3=statement("main")
 {
     return str1+str2+str3;}
 }
-String procList() throws WrongParametersException,LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException: {String procStr=""; String listStr="";}{
+String procList() throws GleicheFunktionNameException,WrongParametersException,LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException: {String procStr=""; String listStr="";}{
     (procStr=procedure() listStr=procList() )?
 {
     return procStr + listStr;
 }
 }
-String funcList() throws WrongParametersException,LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException: {String funcStr=""; String listStr="";}{
+String funcList() throws GleicheFunktionNameException,WrongParametersException,LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException: {String funcStr=""; String listStr="";}{
     (funcStr=function() listStr=funcList() )?
     {
 
@@ -350,12 +350,15 @@ String stmtList(String functionName) throws WrongParametersException,LWertExcept
 String functionCall(String functionName, String functionInline) throws WrongParametersException,UnknowSymbolException,RWertException:{String exp1=""; String exp2="";int paraCount=0;}{
  (exp1=expression(functionName) {paraCount++;} ("," exp2=expression(functionName) {paraCount++; exp1 += exp2;} )*)? ")"
 {
+if(GlobalKlasse.functionList.get(functionInline) != null)
     if(paraCount == GlobalKlasse.functionList.get(functionInline).paraNum)
         return exp1;
     else{
         throw new WrongParametersException("Wrong Parameter Number");
     }
+else return "";
 }
+
 }
 
 //procall
@@ -392,7 +395,7 @@ String routinenBlock(String functionName,int i) throws  WrongParametersException
 }
 
 // func def
-String function() throws WrongParametersException,LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException:{String blockStr=""; String exp=""; int i=0; Token mName=null;}{
+String function() throws GleicheFunktionNameException,WrongParametersException,LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException:{String blockStr=""; String exp=""; int i=0; Token mName=null;}{
     <FUNC> mName=<IDENT> {GlobalKlasse.setFunction(mName.image);} "(" (i=routinenParameter(mName.image))?
 {
     // set function parameter number
@@ -406,7 +409,7 @@ String function() throws WrongParametersException,LWertException,RWertException,
 }
 }
 //procedure def
-String procedure() throws WrongParametersException,LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException:{String blockStr="";int i=0; Token mName=null;}{
+String procedure() throws GleicheFunktionNameException,WrongParametersException,LWertException,RWertException,ConstantAlreadyException, SymbolAlreadyDefinedException, UnknowSymbolException:{String blockStr="";int i=0; Token mName=null;}{
 <VOID> mName=<IDENT>
 {
     // add function to list

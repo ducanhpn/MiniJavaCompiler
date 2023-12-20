@@ -9,7 +9,9 @@ public class GlobalKlasse {
         return functionList.get(functionName);
     }
     //whenever create a function, add it to function list
-    public static void setFunction(String functionName){
+    public static void setFunction(String functionName) throws GleicheFunktionNameException{
+        if(functionList.containsKey(functionName))
+            throw new GleicheFunktionNameException("Duplicate function name");
         functionList.put(functionName, new Symbole());
         // assign funtion name to Symbole instance
         functionList.get(functionName).functionName = functionName;
